@@ -11,9 +11,8 @@ from src.geo_etl.helper_functions import (calc_centroid_diag_bbox,
                                           check_country_in_eur_bbox,
                                           check_point_in_geom)
 
-
 def main():
-    df = pd.read_csv('../cdsw/Coursework_2_Twitter/data/preprocessed_tweets.csv',
+    df = pd.read_csv('/home/cdsw/Coursework_2_Twitter/data/preprocessed_tweets.csv',
                      usecols=['longitude', 'latitude', 'tweet_id', 'place_longitude_1',
                               'place_longitude_2', 'place_latitude_1', 'place_latitude_2'])
 

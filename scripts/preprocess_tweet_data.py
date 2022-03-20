@@ -5,7 +5,7 @@ def main():
 
     dfs = []
     for i in range(5):
-        csv = f'../cdsw/Coursework_2_Twitter/data/tweets_{i}.csv'
+        csv = f'/home/cdsw/Coursework_2_Twitter/data/tweets_{i}.csv'
         tmp_df = pd.read_csv(csv, index_col=0)
         dfs.append(tmp_df)
 
@@ -14,7 +14,7 @@ def main():
 
     dfs = []
     for i in range(5):
-        csv = f'../cdsw/Coursework_2_Twitter/data/tweet_user_dt_{i}.csv'
+        csv = f'/home/cdsw/Coursework_2_Twitter/data/tweet_user_dt_{i}.csv'
         tmp_df = pd.read_csv(csv, index_col=0, parse_dates=['dt_obj'])
         dfs.append(tmp_df)
 
@@ -46,7 +46,7 @@ def main():
     print(f'Dropped {tc3-tc4} from May')
     print(f'Remaining tweets: {tc4}')
 
-    df_comb.to_csv('../cdsw/Coursework_2_Twitter/data/preprocessed_tweets.csv', index=False)
+    df_comb.to_csv('/home/cdsw/Coursework_2_Twitter/data/preprocessed_tweets.csv', index=False)
 
 if __name__ == "__main__":
     main()
