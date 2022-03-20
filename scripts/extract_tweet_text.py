@@ -23,4 +23,6 @@ df = pd.DataFrame(slim_down_tweet_list)
 
 print(df.shape)
 
-df.to_csv('/Users/u1079317/Desktop/Personal/MSc_Exeter/Intro_DS/CW2/slim_down_tweets_retweet.csv')
+# df.to_csv('/Users/u1079317/Desktop/Personal/MSc_Exeter/Intro_DS/CW2/slim_down_tweets_retweet.csv')
+# df.to_csv('/Users/u1079317/Desktop/Personal/MSc_Exeter/Intro_DS/CW2/slim_down_tweets_user_data_screen_name.csv',index=False)
+df.to_csv('/Users/u1079317/Desktop/Personal/MSc_Exeter/Intro_DS/CW2/slim_down_tweets_entities.csv',index=False)

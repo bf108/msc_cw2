@@ -38,6 +38,30 @@ class ExtractTweetData:
         except:
             self.slm_tweet['user_id'] = np.nan
 
+    def extract_user_name(self):
+        try:
+            self.slm_tweet['user_name'] = self.tweet_json.get('user').get('name', np.nan)
+        except:
+            self.slm_tweet['user_name'] = np.nan
+
+    def extract_screen_name(self):
+        try:
+            self.slm_tweet['screen_name'] = self.tweet_json.get('user').get('screen_name', np.nan)
+        except:
+            self.slm_tweet['screen_name'] = np.nan
+
+    def extract_user_friend_count(self):
+        try:
+            self.slm_tweet['user_friend_count'] = self.tweet_json.get('user').get('friends_count', np.nan)
+        except:
+            self.slm_tweet['user_friend_count'] = np.nan
+
+    def extract_user_statuses_count(self):
+        try:
+            self.slm_tweet['user_statuses_count'] = self.tweet_json.get('user').get('statuses_count', np.nan)
+        except:
+            self.slm_tweet['user_statuses_count'] = np.nan
+
     def extract_place(self):
         if self.tweet_json.get('place'):
             for key in ['name', 'id', 'country']:
@@ -66,14 +90,30 @@ class ExtractTweetData:
     def extract_retweet_status(self):
         self.slm_tweet['retweeted'] = True if self.tweet_json.get('retweeted', np.nan) == 'True' else False
 
+
+    def extract_user_mentions(self):
+        self.slm_tweet['user_mentions'] = self.tweet_json.get('user_mentions', [])
+
+
+    def extract_hashtags(self):
+        self.slm_tweet['hashtags'] = self.tweet_json.get('hashtags', [])
+
+
     def produce_slim_tweet(self):
         # self.extract_coordinates()
-        self.extract_date()
+        # self.extract_date()
         self.extract_tweet_id()
-        self.extract_user_id()
+        # self.extract_user_id()
         # self.extract_place()
         # self.extract_text()
-        self.extract_retweet_status()
+        # self.extract_retweet_status()
+        # self.extract_user_name()
+        # self.extract_screen_name()
+        self.extract_user_mentions()
+        self.extract_hashtags()
+
+        # self.extract_user_friend_count()
+        # self.extract_user_statuses_count()
 
     def get_slim_tweet(self):
         if len(self.slm_tweet) == 0:
