@@ -15,7 +15,7 @@ def main():
     dfs = []
     for i in range(5):
         csv = f'../cdsw/Coursework_2_Twitter/data/tweet_user_dt_{i}.csv'
-        tmp_df = pd.read_csv(csv, index_col=0)
+        tmp_df = pd.read_csv(csv, index_col=0, parse_dates=['dt_obj'])
         dfs.append(tmp_df)
 
     df_user_dt = pd.concat(dfs)
@@ -34,9 +34,17 @@ def main():
     df_comb.drop_duplicates(subset=['tweet_id'], inplace=True)
     tc3 = df_comb.shape[0]
 
+    #Convert dt_obj column to datetime
+    # df_comb['dt_obj'] = pd.to_datetime(df_comb['dt_obj'])
+
+    # Limit tweets to June
+    df_comb = df_comb[df_comb['dt_obj_dt'].dt.month == 6]
+    tc4 = df_comb.shape[0]
+
     print(f'Dropped {tc1-tc2} tweets without an id')
     print(f'Dropped {tc2 - tc3} duplicate tweets')
-    print(f'Remaining tweets: {tc3}')
+    print(f'Dropped {tc3-tc4} from May')
+    print(f'Remaining tweets: {tc4}')
 
     df_comb.to_csv('../cdsw/Coursework_2_Twitter/data/preprocessed_tweets.csv', index=False)
 
