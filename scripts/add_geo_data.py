@@ -23,10 +23,12 @@ def main():
                      usecols=['longitude', 'latitude', 'tweet_id', 'place_longitude_1',
                               'place_longitude_2', 'place_latitude_1', 'place_latitude_2'])
 
-#    df_tweets = calc_centroid_diag_bbox(df)
+    # df_tweets = calc_centroid_diag_bbox(df)
+    #
+    # print('write out df_tweets')
+    # df_tweets.to_csv('tweets_diag_bbox.csv',index=False)
 
-#    print('write out df_tweets')
-#    df_tweets.to_csv('tweets_diag_bbox.csv',index=False)
+    df_tweets = pd.read_csv('/home/cdsw/Coursework_2_Twitter/data/tweets_diag_bbox.csv')
 
     print('read in tweets diag bbox')
     df_tweets = pd.read_csv('/home/cdsw/Coursework_2_Twitter/msc_cw2/tweets_diag_bbox.csv')

@@ -90,33 +90,75 @@ class ExtractTweetData:
     def extract_retweet_status(self):
         self.slm_tweet['retweeted'] = True if self.tweet_json.get('retweeted', np.nan) == 'True' else False
 
-
     def extract_user_mentions(self):
         self.slm_tweet['user_mentions'] = self.tweet_json.get('user_mentions', [])
-
 
     def extract_hashtags(self):
         self.slm_tweet['hashtags'] = self.tweet_json.get('hashtags', [])
 
+    def produce_slim_tweet(self,tweet_id,
+                       user_id,
+                       coords,
+                       date,
+                       place,
+                       text,
+                       retweet,
+                       user_name,
+                       screen_name,
+                       user_mentions,
+                       hashtags):
 
-    def produce_slim_tweet(self):
-        # self.extract_coordinates()
-        # self.extract_date()
-        self.extract_tweet_id()
-        # self.extract_user_id()
-        # self.extract_place()
-        # self.extract_text()
-        # self.extract_retweet_status()
-        # self.extract_user_name()
-        # self.extract_screen_name()
-        self.extract_user_mentions()
-        self.extract_hashtags()
+        if tweet_id:
+            self.extract_tweet_id()
+        if user_id:
+            self.extract_user_id()
+        if coords:
+            self.extract_coordinates()
+        if date:
+            self.extract_date()
+        if place:
+            self.extract_place()
+        if text:
+            self.extract_text()
+        if retweet:
+            self.extract_retweet_status()
+        if user_name:
+            self.extract_user_name()
+        if screen_name:
+            self.extract_screen_name()
+        if user_mentions:
+            self.extract_user_mentions()
+        if hashtags:
+            self.extract_hashtags()
 
         # self.extract_user_friend_count()
         # self.extract_user_statuses_count()
 
-    def get_slim_tweet(self):
+    def get_slim_tweet(self,
+                       tweet_id=True,
+                       user_id=True,
+                       coords=True,
+                       date=True,
+                       place=True,
+                       text=True,
+                       retweet=True,
+                       user_name=True,
+                       screen_name=True,
+                       user_mentions=True,
+                       hashtags=True
+                       ):
         if len(self.slm_tweet) == 0:
-            self.produce_slim_tweet()
+            self.produce_slim_tweet(
+                        tweet_id,
+                       user_id,
+                       coords,
+                       date,
+                       place,
+                       text,
+                       retweet,
+                       user_name,
+                       screen_name,
+                       user_mentions,
+                       hashtags)
 
         return self.slm_tweet
