@@ -16,7 +16,17 @@ for zfile in tqdm(sorted(os.listdir(cwd))):
             for tweet in tmp_json.readlines():
                 tweet_dict = json.loads(tweet)
                 etd = ExtractTweetData(tweet_dict)
-                slim_down_tweet_list.append(etd.get_slim_tweet())
+                slim_down_tweet_list.append(etd.get_slim_tweet(tweet_id=True,
+                       user_id=True,
+                       coords=True,
+                       date=True,
+                       place=True,
+                       text=True,
+                       retweet=True,
+                       user_name=True,
+                       screen_name=True,
+                       user_mentions=True,
+                       hashtags=True))
 
 
 df = pd.DataFrame(slim_down_tweet_list)
