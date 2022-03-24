@@ -11,30 +11,37 @@ from shapely.geometry import Point
 import os
 
 os.getcwd()
-os.chdir('/home/cdsw/Coursework_2_Twitter/')
+os.chdir('/home/cdsw/Coursework_2_Twitter/msc_cw2')
 
 from src.geo_etl.helper_functions import (calc_centroid_diag_bbox,
                                           check_country_in_eur_bbox,
                                           check_point_in_geom)
 
 def main():
+    print('read in preprocessed tweets')
     df = pd.read_csv('/home/cdsw/Coursework_2_Twitter/data/preprocessed_tweets.csv',
                      usecols=['longitude', 'latitude', 'tweet_id', 'place_longitude_1',
                               'place_longitude_2', 'place_latitude_1', 'place_latitude_2'])
 
-    df_tweets = calc_centroid_diag_bbox(df)
+#    df_tweets = calc_centroid_diag_bbox(df)
 
-    print('write out df_tweets')
-    df_tweets.to_csv('tweets_diag_bbox.csv',index=False)
+#    print('write out df_tweets')
+#    df_tweets.to_csv('tweets_diag_bbox.csv',index=False)
 
+    print('read in tweets diag bbox')
+    df_tweets = pd.read_csv('/home/cdsw/Coursework_2_Twitter/msc_cw2/tweets_diag_bbox.csv')
+
+    
+    print('Read in countries')
     # Read in zipfile with long-lat of cities in the world
-    zf = ZipFile('../cdsw/Coursework_2_Twitter/data/simplemaps_worldcities_basicv1.75.zip')
+    zf = ZipFile('/home/cdsw/Coursework_2_Twitter/data/simplemaps_worldcities_basicv1.75.zip')
     cities = pd.read_csv(zf.open('worldcities.csv'), usecols=['city', 'lat', 'lng', 'country', 'population'])
 
     # Get geopandas data for world
     gdf = geopd.read_file(geopd.datasets.get_path('naturalearth_lowres'))
     gdf['centroid'] = gdf.centroid
 
+    print('join cities to geometry')
     # Join city data to gpd
     df_eur = pd.merge(gdf[['name', 'centroid', 'geometry']], cities, left_on='name', right_on='country', how='inner')
     df_eur.drop(columns=['name'], inplace=True)
@@ -43,11 +50,14 @@ def main():
     df_eur['in_EUR_box'] = df_eur.apply(lambda x: check_country_in_eur_bbox(x), axis=1)
     df_eur = df_eur[df_eur['in_EUR_box'] == True]
 
-    # keep only cities over 500K people
-    df_eur_major_city = df_eur[df_eur['population'] >= 5e5]
+    print('Only keep cities with 100K people or more')
+    # keep only cities over 100K people
+    df_eur_major_city = df_eur[df_eur['population'] >= 1e5]
 
     # Reset index for lookups
     df_eur_major_city.reset_index(drop=True, inplace=True)
+    
+    print(f"{df_eur_major_city.shape[0]} cities to cross check")
 
     # Get lng lat for all cities in numpy array
     eur_lng_lat = df_eur_major_city[['lng', 'lat']].values
@@ -124,4 +134,8 @@ def main():
     df_tweet_geo = pd.DataFrame.from_dict(idx_tweet_geo_dict, orient='index')
 
     print('Write out df_tweet_geo')
-    df_tweet_geo.to_csv('tweet_geo.csv',index=False)
+    df_tweet_geo.to_csv('/home/cdsw/Coursework_2_Twitter/data/tweet_geo.csv',index=False)
+
+    
+if __name__=='__main__':
+  main()
