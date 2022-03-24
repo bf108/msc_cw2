@@ -33,6 +33,11 @@ df = pd.DataFrame(slim_down_tweet_list)
 
 print(df.shape)
 
-# df.to_csv('/Users/u1079317/Desktop/Personal/MSc_Exeter/Intro_DS/CW2/slim_down_tweets_retweet.csv')
-# df.to_csv('/Users/u1079317/Desktop/Personal/MSc_Exeter/Intro_DS/CW2/slim_down_tweets_user_data_screen_name.csv',index=False)
-df.to_csv('/Users/u1079317/Desktop/Personal/MSc_Exeter/Intro_DS/CW2/slim_down_tweets_entities.csv',index=False)
+#Chunk the csv into more managable size files.
+for idx, chunk in enumerate(np.array_split(df,5)):
+    csv_str = f'../CW2/data/slim_down_tweet_user_data_{idx}.csv'
+    chunk.to_csv(csv_str, index=False)
+
+# df.to_csv('../Intro_DS/CW2/slim_down_tweets_retweet.csv')
+# df.to_csv('../Intro_DS/CW2/slim_down_tweets_user_data_screen_name.csv',index=False)
+# df.to_csv('../Intro_DS/CW2/slim_down_tweets_entities.csv',index=False)
