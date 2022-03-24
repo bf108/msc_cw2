@@ -34,9 +34,6 @@ def main():
     df_comb.drop_duplicates(subset=['tweet_id'], inplace=True)
     tc3 = df_comb.shape[0]
 
-    #Convert dt_obj column to datetime
-    # df_comb['dt_obj'] = pd.to_datetime(df_comb['dt_obj'])
-
     # Limit tweets to June
     df_comb = df_comb[df_comb['dt_obj_dt'].dt.month == 6]
     tc4 = df_comb.shape[0]
