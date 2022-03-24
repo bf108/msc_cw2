@@ -23,17 +23,20 @@ def main():
                      usecols=['longitude', 'latitude', 'tweet_id', 'place_longitude_1',
                               'place_longitude_2', 'place_latitude_1', 'place_latitude_2'])
 
+    ########################################################################
+    # Calculate centroid for location bounding boxes
+    ########################################################################
     # df_tweets = calc_centroid_diag_bbox(df)
-    #
     # print('write out df_tweets')
     # df_tweets.to_csv('tweets_diag_bbox.csv',index=False)
-
-    df_tweets = pd.read_csv('/home/cdsw/Coursework_2_Twitter/data/tweets_diag_bbox.csv')
 
     print('read in tweets diag bbox')
     df_tweets = pd.read_csv('/home/cdsw/Coursework_2_Twitter/msc_cw2/tweets_diag_bbox.csv')
 
-    
+    ########################################################################
+    # Find Major Cities within Bounding Box
+    ########################################################################
+
     print('Read in countries')
     # Read in zipfile with long-lat of cities in the world
     zf = ZipFile('/home/cdsw/Coursework_2_Twitter/data/simplemaps_worldcities_basicv1.75.zip')
@@ -60,6 +63,11 @@ def main():
     df_eur_major_city.reset_index(drop=True, inplace=True)
     
     print(f"{df_eur_major_city.shape[0]} cities to cross check")
+
+    ########################################################################
+    # Find Euclidian Distance to All Major Cities within Bounding Box
+    # Find closest 5 cities, and their corresponding country, to each tweet
+    ########################################################################
 
     # Get lng lat for all cities in numpy array
     eur_lng_lat = df_eur_major_city[['lng', 'lat']].values
