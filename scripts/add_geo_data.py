@@ -67,8 +67,6 @@ def main():
     # Array of tweet lng, lat
     tweet_lng_lat = df_tweets[['fin_lng', 'fin_lat']].values
 
-    tweet_lng_lat.shape
-
     # Calculate distance from each tweet to all cities
     print('Calculate distance from each tweet to all cities')
     distance_mat = []
@@ -96,18 +94,24 @@ def main():
     for indices in tqdm(closest_k_cities_index):
         closest_k_countries.append([countries_dict[idx] for idx in indices])
 
-    # Now we need to check whether the tweet is in these countries starting with country of closes city
+    #########################################################################
+    # Check whether the tweet is in countries associated with closest city
+    #########################################################################
+
+    #Set up dictionary for country and geometry
     country_geom_dict = {country: geom for country, geom in
                          df_eur_major_city.drop_duplicates(subset=['country'])[['country', 'geometry']].values}
 
+    #List of coords for all tweets
     tweet_points = [Point(tup) for tup in df_tweets[['fin_lng', 'fin_lat']].values]
-
     df_tweets['point'] = tweet_points
 
+    #Set up dictionary to store all results
     idx_tweet_geo_dict = {idx: {'tweet_id': t[0], 'point': t[1]} for t, idx in
                           zip(df_tweets[['tweet_id', 'point']].values, df_tweets.index)}
 
     print('tweet country dict')
+    #Loop through all closest city: country list pairs
     for i, v in tqdm(enumerate(zip(closest_k_cities, closest_k_countries))):
         city_lst, country_lst = v[0], v[1]
         # set confirmed location flag to False
@@ -115,10 +119,10 @@ def main():
 
         counter = 1
         for city, country in zip(city_lst, country_lst):
-            # if tweet geo point in country geom == True
             twt_point = idx_tweet_geo_dict[i]['point']
             country_geom = country_geom_dict[country]
 
+            #If the tweet is in country geom, then assign values in dict and exit loop
             if check_point_in_geom(twt_point, country_geom):
                 idx_tweet_geo_dict[i]['city'] = city
                 idx_tweet_geo_dict[i]['country'] = country
@@ -127,17 +131,16 @@ def main():
                 break
             counter += 1
 
-        # If tweet not in any of listed country input np.nan
+        # If tweet not in any of listed country assign to country of closest city
         if idx_tweet_geo_dict[i].get('confirmed') == False:
             idx_tweet_geo_dict[i]['city'] = city_lst[0]
             idx_tweet_geo_dict[i]['country'] = country_lst[0]
 
-
     df_tweet_geo = pd.DataFrame.from_dict(idx_tweet_geo_dict, orient='index')
 
     print('Write out df_tweet_geo')
-    df_tweet_geo.to_csv('/home/cdsw/Coursework_2_Twitter/data/tweet_geo.csv',index=False)
+    df_tweet_geo.to_csv('/home/cdsw/Coursework_2_Twitter/data/tweet_geo.csv', index=False)
 
-    
+
 if __name__=='__main__':
-  main()
+    main()
