@@ -22,13 +22,15 @@ def main():
                      usecols=['longitude', 'latitude', 'tweet_id', 'place_longitude_1',
                               'place_longitude_2', 'place_latitude_1', 'place_latitude_2'])
 
-    df_tweets = calc_centroid_diag_bbox(df)
+    # df_tweets = calc_centroid_diag_bbox(df)
+    #
+    # print('write out df_tweets')
+    # df_tweets.to_csv('tweets_diag_bbox.csv',index=False)
 
-    print('write out df_tweets')
-    df_tweets.to_csv('tweets_diag_bbox.csv',index=False)
+    df_tweets = pd.read_csv('/home/cdsw/Coursework_2_Twitter/data/tweets_diag_bbox.csv')
 
     # Read in zipfile with long-lat of cities in the world
-    zf = ZipFile('../cdsw/Coursework_2_Twitter/data/simplemaps_worldcities_basicv1.75.zip')
+    zf = ZipFile('home/cdsw/Coursework_2_Twitter/data/simplemaps_worldcities_basicv1.75.zip')
     cities = pd.read_csv(zf.open('worldcities.csv'), usecols=['city', 'lat', 'lng', 'country', 'population'])
 
     # Get geopandas data for world
