@@ -21,6 +21,8 @@ def main():
     df_user_dt = pd.concat(dfs)
     df_user_dt = df_user_dt.reset_index()
     df_comb = pd.concat([df_tot, df_user_dt], axis=1)
+    
+    print(df_comb.columns)
 
     tc1 = df_comb.shape[0]
     # Drop duplicate columns
@@ -35,7 +37,7 @@ def main():
     tc3 = df_comb.shape[0]
 
     # Limit tweets to June
-    df_comb = df_comb[df_comb['dt_obj_dt'].dt.month == 6]
+    df_comb = df_comb[df_comb['dt_obj'].dt.month == 6]
     tc4 = df_comb.shape[0]
 
     print(f'Dropped {tc1-tc2} tweets without an id')
