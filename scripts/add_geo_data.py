@@ -15,7 +15,7 @@ from src.geo_etl.helper_functions import (calc_centroid_diag_bbox,
                                           check_point_in_geom)
 
 def main():
-    print('read in preprocessed tweets')
+    print('Read in preprocessed tweets')
     df = pd.read_csv('/home/cdsw/Coursework_2_Twitter/data/preprocessed_tweets.csv',
                      usecols=['longitude', 'latitude', 'tweet_id', 'place_longitude_1',
                               'place_longitude_2', 'place_latitude_1', 'place_latitude_2'])
@@ -24,7 +24,7 @@ def main():
     ########################################################################
     print('Calculate centroid for all location bounding boxes')
     df_tweets = calc_centroid_diag_bbox(df)
-    print('write out df_tweets_diag_bbox.csv...')
+    print('Write out df_tweets_diag_bbox.csv...')
     df_tweets.to_csv('tweets_diag_bbox.csv', index=False)
 
     # print('read in tweets diag bbox')
@@ -37,7 +37,7 @@ def main():
     print('Read in countries')
     # Read in zipfile with long-lat of cities in the world
     zf = ZipFile('/home/cdsw/Coursework_2_Twitter/data/simplemaps_worldcities_basicv1.75.zip')
-    cities = pd.read_csv(zf.open('worldcities.csv'), usecols=['city', 'lat', 'lng', 'country', 'population'])
+    cities = pd.read_csv(zf.open('worldcities.csv'), usecols=['city', 'lat', 'lng', 'country', 'population', 'capital'])
 
     # Get geopandas data for world
     gdf = geopd.read_file(geopd.datasets.get_path('naturalearth_lowres'))
@@ -52,9 +52,9 @@ def main():
     df_eur['in_EUR_box'] = df_eur.apply(lambda x: check_country_in_eur_bbox(x), axis=1)
     df_eur = df_eur[df_eur['in_EUR_box'] == True]
 
-    print('Only keep cities with 100K people or more')
-    # keep only cities over 100K people
-    df_eur_major_city = df_eur[df_eur['population'] >= 1e5]
+    print('Only keep capital cities and those with 100K people or more')
+    # keep all capital cities and those with populations greater than 100K
+    df_eur_major_city = df_eur[(df_eur['population'] >= 1e5) | (df_eur['capital'] >= 'primary')]
 
     # Reset index for lookups
     df_eur_major_city.reset_index(drop=True, inplace=True)
