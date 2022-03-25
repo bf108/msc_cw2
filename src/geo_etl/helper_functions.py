@@ -1,13 +1,6 @@
 import pandas as pd
 import numpy as np
-from tqdm import tqdm
-import requests
 import math
-from zipfile import ZipFile
-import geopandas as geopd
-from scipy.spatial import distance
-from shapely.geometry import Point
-
 
 def find_centroid(array_min_lng, array_max_lng, array_min_lat, array_max_lat):
     """
@@ -90,14 +83,14 @@ def calc_centroid_diag_bbox(df):
     df = pd.concat([df, df_loc_lat_centroid, df_diagonal], axis=1)
 
     final_lng = []
-    for tup in tqdm(df[['longitude', 'loc_centroid_lng']].values):
+    for tup in df[['longitude', 'loc_centroid_lng']].values:
         if math.isnan(tup[0]):
             final_lng.append(tup[1])
         else:
             final_lng.append(tup[0])
 
     final_lat = []
-    for tup in tqdm(df[['latitude', 'loc_centroid_lat']].values):
+    for tup in df[['latitude', 'loc_centroid_lat']].values:
         if math.isnan(tup[0]):
             final_lat.append(tup[1])
         else:

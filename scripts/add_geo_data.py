@@ -1,8 +1,5 @@
 import pandas as pd
 import numpy as np
-from tqdm import tqdm
-import requests
-import math
 from zipfile import ZipFile
 import geopandas as geopd
 from scipy.spatial import distance
@@ -22,16 +19,16 @@ def main():
     df = pd.read_csv('/home/cdsw/Coursework_2_Twitter/data/preprocessed_tweets.csv',
                      usecols=['longitude', 'latitude', 'tweet_id', 'place_longitude_1',
                               'place_longitude_2', 'place_latitude_1', 'place_latitude_2'])
-
     ########################################################################
-    # Calculate centroid for location bounding boxes
+    # Calculate centroid and diagonal length for location bounding boxes
     ########################################################################
-    # df_tweets = calc_centroid_diag_bbox(df)
-    # print('write out df_tweets')
-    # df_tweets.to_csv('tweets_diag_bbox.csv',index=False)
+    print('Calculate centroid for all location bounding boxes')
+    df_tweets = calc_centroid_diag_bbox(df)
+    print('write out df_tweets_diag_bbox.csv...')
+    df_tweets.to_csv('tweets_diag_bbox.csv', index=False)
 
-    print('read in tweets diag bbox')
-    df_tweets = pd.read_csv('/home/cdsw/Coursework_2_Twitter/msc_cw2/tweets_diag_bbox.csv')
+    # print('read in tweets diag bbox')
+    # df_tweets = pd.read_csv('/home/cdsw/Coursework_2_Twitter/msc_cw2/tweets_diag_bbox.csv')
 
     ########################################################################
     # Find Major Cities within Bounding Box
@@ -78,7 +75,7 @@ def main():
     # Calculate distance from each tweet to all cities
     print('Calculate distance from each tweet to all cities')
     distance_mat = []
-    for tup in tqdm(tweet_lng_lat):
+    for tup in tweet_lng_lat:
         distance_mat.append(distance.cdist(tup.reshape(1, 2), eur_lng_lat))
 
     # Closest k cities index
@@ -86,20 +83,20 @@ def main():
 
     print('Closest 5 cities')
     closest_k_cities_index = []
-    for mat in tqdm(distance_mat):
+    for mat in distance_mat:
         closest_k_cities_index.append(np.argpartition(mat[0], range(k))[:k])
 
     cities_dict = df_eur_major_city['city'].to_dict()
 
     closest_k_cities = []
-    for indices in tqdm(closest_k_cities_index):
+    for indices in closest_k_cities_index:
         closest_k_cities.append([cities_dict[idx] for idx in indices])
 
     countries_dict = df_eur_major_city['country'].to_dict()
 
     print('Closest countries')
     closest_k_countries = []
-    for indices in tqdm(closest_k_cities_index):
+    for indices in closest_k_cities_index:
         closest_k_countries.append([countries_dict[idx] for idx in indices])
 
     #########################################################################
@@ -120,7 +117,7 @@ def main():
 
     print('tweet country dict')
     #Loop through all closest city: country list pairs
-    for i, v in tqdm(enumerate(zip(closest_k_cities, closest_k_countries))):
+    for i, v in enumerate(zip(closest_k_cities, closest_k_countries)):
         city_lst, country_lst = v[0], v[1]
         # set confirmed location flag to False
         idx_tweet_geo_dict[i]['confirmed'] = False
