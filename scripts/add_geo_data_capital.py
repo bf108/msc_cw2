@@ -2,6 +2,7 @@ import pandas as pd
 from tqdm import tqdm
 import os
 from geopy.distance import geodesic
+import numpy as np
 
 os.getcwd()
 os.chdir('/home/cdsw/Coursework_2_Twitter/msc_cw2')
