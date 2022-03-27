@@ -54,8 +54,9 @@ def main():
     df_eur = df_eur[df_eur['in_EUR_box'] == True]
 
     print('Only keep capital cities')
-    # keep only capital cities
-    df_eur_major_city = df_eur[df_eur['capital'] == 'primary']
+    # keep only capital cities and few other essentials
+    missed_city = ['Belfast', 'Cagliari', 'Edinburgh', 'Palma', 'Rijeka', 'Tangier', 'İzmir']
+    df_eur_major_city = df_eur[(df_eur['capital'] == 'primary') | (df_eur['city'].isin(missed_city))]
 
     # Reset index for lookups
     df_eur_major_city.reset_index(drop=True, inplace=True)
