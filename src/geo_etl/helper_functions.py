@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import math
+from geopy.distance import distance
 
 def find_centroid(array_min_lng, array_max_lng, array_min_lat, array_max_lat):
     """
@@ -31,8 +32,8 @@ def edges_leading_diaganol(array_min_lng, array_max_lng, array_min_lat, array_ma
     :param array_max_lat: np.array (floats) - max latitude
     :return:   np.array( tuple(float, float) ) - blhc coords, trhc coords of bounding box
     """
-    blhc = np.array((array_min_lng, array_min_lat)).T
-    trhc = np.array((array_max_lng, array_max_lat)).T
+    blhc = np.array((array_min_lat, array_min_lng)).T
+    trhc = np.array((array_max_lat, array_max_lng)).T
 
     return blhc, trhc
 
@@ -62,7 +63,8 @@ def leading_diag_len(df):
     diagonal = []
     for blhc, trhc in zip(edges_bbox[0], edges_bbox[1]):
         try:
-            ans = abs(np.linalg.norm(trhc - blhc))
+            ans = abs(distance(blhc, trhc).kilometers)
+            # ans = abs(np.linalg.norm(trhc - blhc))
         except:
             ans = np.nan
         diagonal.append(ans)
