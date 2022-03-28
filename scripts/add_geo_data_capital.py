@@ -7,10 +7,11 @@ import numpy as np
 os.getcwd()
 os.chdir('/home/cdsw/Coursework_2_Twitter/msc_cw2')
 
-from src.geo_etl.helper_functions import (calc_centroid_diag_bbox,
+from src.geo_etl.helper_functions import (calc_centroid_bbox,
                                           check_country_in_eur_bbox,
                                           check_point_in_geom,
-                                          edges_leading_diaganol)
+                                          edges_leading_diaganol,
+                                          leading_diag_len)
 
 
 def main():
@@ -18,43 +19,24 @@ def main():
     df = pd.read_csv('/home/cdsw/Coursework_2_Twitter/data/preprocessed_tweets.csv',
                      usecols=['longitude', 'latitude', 'tweet_id', 'place_longitude_1',
                               'place_longitude_2', 'place_latitude_1', 'place_latitude_2'])
+
     ########################################################################
     # Calculate diagonal length for location bounding boxes
     ########################################################################
 
-    print('drop nans')
-    tmp_df = df.dropna(subset=['place_longitude_1']).sample(10)
-
-    #Get edges of box
-    cols = ['place_longitude_1', 'place_longitude_2', 'place_latitude_1', 'place_latitude_2']
-    print('get edges')
-    edges_bbox = edges_leading_diaganol(*[df[c].values for c in cols])
-
-    print('start loop for distances')
-    diagonal = []
-    for blhc, trhc in tqdm(zip(edges_bbox[0], edges_bbox[1])):
-        try:
-            ans = abs(geodesic(blhc, trhc).kilometers)
-            # ans = abs(np.linalg.norm(trhc - blhc))
-        except:
-            ans = np.nan
-        diagonal.append(ans)
-
-    print('write out df')
-    df_diagonal = pd.DataFrame(diagonal, columns=['diagonal'])
-    df_diagonal.to_csv('/home/cdsw/Coursework_2_Twitter/msc_cw2/tweets_geodesic_diag_box.csv',
-                       index=False)
+    leading_diag_len(df.dropna(subset=['place_longitude_1'])).\
+        to_csv('/home/cdsw/Coursework_2_Twitter/msc_cw2/tweets_geodesic_diag_box.csv', index=False)
 
     ########################################################################
-    # Calculate centroid and diagonal length for location bounding boxes
+    # Calculate centroid for location bounding boxes
     ########################################################################
     # print('Calculate centroid for all location bounding boxes')
-    # df_tweets = calc_centroid_diag_bbox(df)
-    # print('Write out df_tweets_diag_bbox.csv...')
-    # df_tweets.to_csv('tweets_diag_bbox.csv', index=False)
+    # df_tweets = calc_centroid_bbox(df)
+    # print('Write out df_tweets_bbox.csv...')
+    # df_tweets.to_csv('tweets_bbox.csv', index=False)
 
-    # print('read in tweets diag bbox')
-    # df_tweets = pd.read_csv('/home/cdsw/Coursework_2_Twitter/msc_cw2/tweets_diag_bbox.csv')
+    # print('read in tweets centroid bbox')
+    # df_tweets = pd.read_csv('/home/cdsw/Coursework_2_Twitter/msc_cw2/tweets_bbox.csv')
 
     ########################################################################
     # Find Major Cities within Bounding Box
