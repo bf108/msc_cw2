@@ -1,5 +1,5 @@
 import pandas as pd
-from tqdm import tqdm
+#from tqdm import tqdm
 import os
 from geopy.distance import geodesic
 import numpy as np
@@ -22,9 +22,6 @@ def main():
     # Calculate diagonal length for location bounding boxes
     ########################################################################
 
-    print('drop nans')
-    tmp_df = df.dropna(subset=['place_longitude_1']).sample(10)
-
     #Get edges of box
     cols = ['place_longitude_1', 'place_longitude_2', 'place_latitude_1', 'place_latitude_2']
     print('get edges')
@@ -32,7 +29,7 @@ def main():
 
     print('start loop for distances')
     diagonal = []
-    for blhc, trhc in tqdm(zip(edges_bbox[0], edges_bbox[1])):
+    for blhc, trhc in zip(edges_bbox[0], edges_bbox[1]):
         try:
             ans = abs(geodesic(blhc, trhc).kilometers)
             # ans = abs(np.linalg.norm(trhc - blhc))
