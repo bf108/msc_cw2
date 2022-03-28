@@ -5,40 +5,37 @@ import json
 from tqdm import tqdm
 import pandas as pd
 
-os.chdir('../MSc_Exeter/Intro_DS/CW2/data')
+os.chdir('/Users/u1079317/Desktop/Personal/MSc_Exeter/Intro_DS/CW2/data')
 cwd = os.getcwd()
 
-slim_down_tweet_list = []
+verified_users = {'screen_name': [], 'user_id': []}
 for zfile in tqdm(sorted(os.listdir(cwd))):
-    zip_path = os.path.join(cwd, zfile)
-    with ZipFile(zip_path) as zf:
-        with zf.open(zf.namelist()[0]) as tmp_json:
-            for tweet in tmp_json.readlines():
-                tweet_dict = json.loads(tweet)
-                etd = ExtractTweetData(tweet_dict)
-                slim_down_tweet_list.append(etd.get_slim_tweet(tweet_id=True,
-                       user_id=True,
-                       coords=True,
-                       date=True,
-                       place=True,
-                       text=True,
-                       retweet=True,
-                       user_name=True,
-                       screen_name=True,
-                       user_mentions=True,
-                       hashtags=True,
-                        user_verified_status=True))
+    if '.zip' in zfile:
+        zip_path = os.path.join(cwd, zfile)
+        with ZipFile(zip_path) as zf:
+            with zf.open(zf.namelist()[0]) as tmp_json:
+                for tweet in tmp_json.readlines():
+                    tweet_dict = json.loads(tweet)
+                    etd = ExtractTweetData(tweet_dict)
 
+                    slm_twt = etd.get_slim_tweet(tweet_id=False,
+                                                   user_id=True,
+                                                   coords=False,
+                                                   date=False,
+                                                   place=False,
+                                                   text=False,
+                                                   retweet=False,
+                                                   user_name=False,
+                                                   screen_name=True,
+                                                   user_mentions=False,
+                                                   hashtags=False,
+                                                    user_verified_status=True)
 
-df = pd.DataFrame(slim_down_tweet_list)
+                    if slm_twt['user_verified_status']:
+                        if not slm_twt['screen_name'] in verified_users['screen_name']:
+                            verified_users['screen_name'].append(slm_twt['screen_name'])
+                            verified_users['user_id'].append(slm_twt['user_id'])
 
+df = pd.DataFrame(verified_users)
 print(df.shape)
-
-#Chunk the csv into more managable size files.
-for idx, chunk in enumerate(np.array_split(df,5)):
-    csv_str = f'../CW2/data/slim_down_tweet_user_data_{idx}.csv'
-    chunk.to_csv(csv_str, index=False)
-
-# df.to_csv('../Intro_DS/CW2/slim_down_tweets_retweet.csv')
-# df.to_csv('../Intro_DS/CW2/slim_down_tweets_user_data_screen_name.csv',index=False)
-# df.to_csv('../Intro_DS/CW2/slim_down_tweets_entities.csv',index=False)
+df.to_csv('/Users/u1079317/Desktop/Personal/MSc_Exeter/Intro_DS/CW2/data/verified_users.csv', index=False)

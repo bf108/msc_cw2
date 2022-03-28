@@ -4,6 +4,7 @@ import os
 import json
 from tqdm import tqdm
 import pandas as pd
+import numpy as np
 
 os.chdir('../MSc_Exeter/Intro_DS/CW2/data')
 cwd = os.getcwd()
@@ -26,7 +27,8 @@ for zfile in tqdm(sorted(os.listdir(cwd))):
                        user_name=True,
                        screen_name=True,
                        user_mentions=True,
-                       hashtags=True))
+                       hashtags=True,
+                        user_verified_status=True))
 
 
 df = pd.DataFrame(slim_down_tweet_list)
