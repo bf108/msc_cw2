@@ -74,15 +74,13 @@ def leading_diag_len(df):
     return df_diagonal
 
 
-def calc_centroid_diag_bbox(df):
-    """Wrapper function to add location centroid and leading diagonal length as new columns of a df"""
+def calc_centroid_bbox(df):
+    """Wrapper function to add location centroid as new columns of a df"""
     cols = ['place_longitude_1', 'place_longitude_2', 'place_latitude_1', 'place_latitude_2']
     centroid_loc_bbox = find_centroid(*[df[c].values for c in cols])
     df_loc_lat_centroid = pd.DataFrame(centroid_loc_bbox, columns=['loc_centroid_lng', 'loc_centroid_lat'])
 
-    df_diagonal = leading_diag_len(df)
-
-    df = pd.concat([df, df_loc_lat_centroid, df_diagonal], axis=1)
+    df = pd.concat([df, df_loc_lat_centroid], axis=1)
 
     final_lng = []
     for tup in df[['longitude', 'loc_centroid_lng']].values:
