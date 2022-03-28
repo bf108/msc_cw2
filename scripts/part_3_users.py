@@ -119,3 +119,67 @@ for tweet in tweet_texts:
         break
 
 top_mentions = sorted([(k,v['count']) for k,v in hashtags_with_ws.items()], key=lambda x: x[1], reverse=True)
+
+
+########################################################################
+# Countries mentioning Other Countries
+########################################################################
+
+df_geo = pd.read_csv('/home/cdsw/Coursework_2_Twitter/data/tweet_geo_.csv',usecols=['tweet_id','country'])
+df_t = pd.read_csv('/home/cdsw/Coursework_2_Twitter/data/preprocessed_tweets.csv', usecols=['tweet_id','user_id'])
+
+df_comb = pd.concat([df_t, df_geo['country']], axis=1)
+
+def get_country_user_screen_names(country):
+    uk_users = df_comb[df_comb['country'] == country]['user_id'].unique()
+    uk_user_screen_names = df_user[df_user['user_id'].isin(uk_users)]['screen_name'].unique()
+    return uk_user_screen_names
+
+
+def get_country_tweets(country):
+    uk_tweets = df_comb[df_comb['country'] == country]['tweet_id'].unique()
+    tweet_texts = df_txt[df_txt['tweet_id'].isin(uk_tweets)]['text'].values
+    return tweet_texts
+
+
+def extract_at_hashtags(text):
+    pat = '(?i)(#\S*)|(@ ?\S*)'
+    return [''.join(tup).replace(' ', '').replace('@', '') for tup in re.findall(pat, str(text))]
+
+
+def count_up_hashtags(tweet_texts):
+    hashtags_with_ws = {}
+    for tweet in tweet_texts:
+        try:
+            for tag in extract_at_hashtags(tweet):
+                if hashtags_with_ws.get(tag):
+                    hashtags_with_ws[tag]['count'] += 1
+                    hashtags_with_ws[tag]['tweets'].append(tweet)
+                else:
+                    hashtags_with_ws[tag] = {'count': 1, 'tweets': [tweet]}
+        except Exception as e:
+            print(tweet)
+            print(e)
+            break
+
+    return hashtags_with_ws
+
+
+countries_to_check = ['United Kingdom', 'Spain', 'Ireland', 'France']
+# get list of tweet_ids
+tweets_per_c = [get_country_tweets(c) for c in countries_to_check]
+# Get screen names
+screen_name_per_c = [get_country_user_screen_names(c) for c in countries_to_check]
+# Get hashtags per country
+hts_per_c = [count_up_hashtags(c) for c in tweets_per_c]
+
+result_dict = {'United Kingdom': {}, 'Spain': {}, 'Ireland': {}, 'France': {}}
+for snc, c in zip(screen_name_per_c, countries_to_check):
+    for i, htc in enumerate(hts_per_c):
+        count = 0
+        for sn in snc:
+            if htc.get(sn):
+                count += htc.get(sn).get('count')
+
+        print(f'{countries_to_check[i]} mentions {c}: {count}')
+        result_dict[countries_to_check[i]][c] = count

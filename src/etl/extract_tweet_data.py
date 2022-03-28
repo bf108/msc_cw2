@@ -62,6 +62,12 @@ class ExtractTweetData:
         except:
             self.slm_tweet['user_statuses_count'] = np.nan
 
+    def extract_user_verified_status(self):
+        try:
+            self.slm_tweet['user_verified_status'] = self.tweet_json.get('user').get('verified', np.nan)
+        except:
+            self.slm_tweet['user_verified_status'] = np.nan
+
     def extract_place(self):
         if self.tweet_json.get('place'):
             for key in ['name', 'id', 'country']:
@@ -106,7 +112,8 @@ class ExtractTweetData:
                        user_name,
                        screen_name,
                        user_mentions,
-                       hashtags):
+                       hashtags,
+                        user_verified_status):
 
         if tweet_id:
             self.extract_tweet_id()
@@ -130,6 +137,8 @@ class ExtractTweetData:
             self.extract_user_mentions()
         if hashtags:
             self.extract_hashtags()
+        if user_verified_status:
+            self.extract_user_verified_status()
 
         # self.extract_user_friend_count()
         # self.extract_user_statuses_count()
@@ -145,7 +154,8 @@ class ExtractTweetData:
                        user_name=True,
                        screen_name=True,
                        user_mentions=True,
-                       hashtags=True
+                       hashtags=True,
+                       user_verified_status=True
                        ):
         if len(self.slm_tweet) == 0:
             self.produce_slim_tweet(
@@ -159,6 +169,8 @@ class ExtractTweetData:
                        user_name,
                        screen_name,
                        user_mentions,
-                       hashtags)
+                       hashtags,
+                       user_verified_status
+            )
 
         return self.slm_tweet
