@@ -167,3 +167,34 @@ colour_bar_y_ticks_labels = [l.get_text() for l in cb_ax.get_yticklabels()]
 cb_ax.set_yticklabels([int(y) // 1000 for y in colour_bar_y_ticks_labels]);
 
 fig.savefig('../static/bounding_box_eur_heatmap.png');
+
+
+############################################################################################################
+# CDF Leading Diagonal
+############################################################################################################
+
+
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(8,3))
+ax[0].hist(df_tmp_2['diagonal'], cumulative=True,bins=1000,
+           histtype='step', density=True, label='Normalised CDF', linewidth=2)
+ax[1].hist(df_tmp_2['diagonal'], cumulative=True,bins=1000,
+           histtype='step', label='Absolute CDF', linewidth=2)
+
+yticks = [l for l in ax[1].get_yticks()]
+ax[1].set_yticks(yticks)
+
+#Scale y-tick labels to millions
+y_tick_lab_m = np.array(yticks)/1e6
+ax[1].set_yticklabels(y_tick_lab_m)
+# ax[1].set_ylim(0,15e6)
+
+ax[0].set_xlabel('Bounding Diagonal Length (km)')
+ax[0].set_ylabel('Probability')
+ax[1].set_xlabel('Bounding Diagonal Length (km)')
+ax[1].set_ylabel('Count (Millions)')
+ax[0].legend(loc='upper center', bbox_to_anchor=(0.5, -0.2),
+          fancybox=True, shadow=True, ncol=1)
+ax[1].legend(loc='upper center', bbox_to_anchor=(0.5, -0.2),
+          fancybox=True, shadow=True, ncol=1)
+
+fig.suptitle('CDF of Loc Leading Diagonal (kilometers)', fontsize=16);
