@@ -174,10 +174,14 @@ screen_name_per_c = [get_country_user_screen_names(c) for c in countries_to_chec
 hts_per_c = [count_up_hashtags(c) for c in tweets_per_c]
 
 result_dict = {'United Kingdom': {}, 'Spain': {}, 'Ireland': {}, 'France': {}}
+#Loop through each set of users in each country
 for snc, c in zip(screen_name_per_c, countries_to_check):
+    # Loop through each set of hash tags extract from country tweets
     for i, htc in enumerate(hts_per_c):
+        #Set up a counter to record where users for country are menioned in tweets
         count = 0
         for sn in snc:
+            #For each username in users for a country find how many times they are mentioned.
             if htc.get(sn):
                 count += htc.get(sn).get('count')
 
