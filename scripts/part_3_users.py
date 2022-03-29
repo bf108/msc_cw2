@@ -166,24 +166,31 @@ def count_up_hashtags(tweet_texts):
 
 
 countries_to_check = ['United Kingdom', 'Spain', 'Ireland', 'France']
-# get list of tweet_ids
-tweets_per_c = [get_country_tweets(c) for c in countries_to_check]
-# Get screen names
-screen_name_per_c = [get_country_user_screen_names(c) for c in countries_to_check]
-# Get hashtags per country
-hts_per_c = [count_up_hashtags(c) for c in tweets_per_c]
+result_dict = {'United Kingdom':{}, 'Spain':{}, 'Ireland':{}, 'France':{}}
 
-result_dict = {'United Kingdom': {}, 'Spain': {}, 'Ireland': {}, 'France': {}}
-#Loop through each set of users in each country
-for snc, c in zip(screen_name_per_c, countries_to_check):
-    # Loop through each set of hash tags extract from country tweets
-    for i, htc in enumerate(hts_per_c):
-        #Set up a counter to record where users for country are menioned in tweets
-        count = 0
-        for sn in snc:
-            #For each username in users for a country find how many times they are mentioned.
-            if htc.get(sn):
-                count += htc.get(sn).get('count')
+#Prepare data to work on
+for c in countries_to_check:
+    #Gather all tweets from that country
+    result_dict[c]['tweets'] = get_country_tweets(c)
+    #Gather all users from that country
+    result_dict[c]['screen_names'] = get_country_user_screen_names(c)
+    #Extract all hashtags from the tweets from that country
+    result_dict[c]['hash_tags'] = count_up_hashtags(result_dict[c]['tweets'])
 
-        print(f'{countries_to_check[i]} mentions {c}: {count}')
-        result_dict[countries_to_check[i]][c] = count
+#countries to check for doing the mentioning:
+for country in countries_to_check:
+    #countries to check for being mentioned
+    result_dict[country]['mentions'] = {}
+    for k in result_dict:
+        #Set mentions of country k by country to zero
+        result_dict[country]['mentions'][k] = 0
+        print(f'Checking mentions of {k} in {country} tweets')
+        #check to see if any tweets from country have mentioned each user in country 'k'
+        for user in result_dict[k]['screen_names']:
+            if result_dict[country]['hash_tags'].get(user):
+                result_dict[country]['mentions'][k] += result_dict[country]['hash_tags'][user]['count']
+
+#print out results
+for c in countries_to_check:
+    for c_mentioned, cnt in result_dict[c]['mentions'].items():
+        print(f'* {c} mentions {c_mentioned} {cnt} times\n')
