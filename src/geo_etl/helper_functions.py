@@ -41,6 +41,8 @@ def edges_leading_diaganol(array_min_lng, array_max_lng, array_min_lat, array_ma
 def leading_diag_len(df):
     """
     Adds a new column to DataFrame (df) of the leading diagongal length of location data.
+    Uses geopy.distance.geodesic method to determine distance between bottom left hand corner (blhc)
+    and top right hand corner (trhc) of bounding box.
 
     It is necessary for the following columns to exists in df:
 

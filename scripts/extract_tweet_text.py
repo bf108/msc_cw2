@@ -33,8 +33,6 @@ for zfile in tqdm(sorted(os.listdir(cwd))):
 
 df = pd.DataFrame(slim_down_tweet_list)
 
-print(df.shape)
-
 #Chunk the csv into more managable size files.
 for idx, chunk in enumerate(np.array_split(df,5)):
     csv_str = f'../CW2/data/slim_down_tweet_user_data_{idx}.csv'

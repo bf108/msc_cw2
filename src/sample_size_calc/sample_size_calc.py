@@ -24,7 +24,7 @@ class SampleSizeCalculator:
 
     def sample_size_continuous(self, mu_a, mu_b, std_a, std_b, samp_ratio, alpha=None, beta=None):
         """
-        Sample size required to measure difference between to continuous variables. 
+        Sample size required to measure difference between two continuous variables.
         
         Assume variable follow a normal distribution.
 
